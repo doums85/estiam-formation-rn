@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { Button, FlatList, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { TaskInput, TaskItem } from './components';
 
+import * as Sentry from 'sentry-expo';
+
+Sentry.init({
+  dsn: 'https://551d34c9683246d6b1f971099204c5f6@o4504530688212992.ingest.sentry.io/4504530799296512',
+  enableInExpoDevelopment: true,
+  debug: true,
+});
+
 export default function App() {
   const [textEntered, setTextEntered] = useState('');
   const [tasks, setTasks] = useState([]);
@@ -16,6 +24,8 @@ export default function App() {
     setTasks((currentTasks) => currentTasks.filter((_, index) => index !== id));
 
   const modalVisibilityHandler = () => setModalVisible(!modalVisible);
+
+  Sentry.Native.captureException('New error from Application');
 
   return (
     <View style={styles.container}>

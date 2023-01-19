@@ -6,12 +6,7 @@ export default function TaskInput(props) {
   return (
     <Modal animationType="fade" visible={props.modalVisible}>
       <View style={styles.taskContainer}>
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1661956602116-aa6865609028?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1364&q=80',
-          }}
-          style={styles.image}
-        />
+        <Image source={taskImage} style={styles.image} />
         <TextInput
           value={props.textEntered}
           onChangeText={props.onchangeHandler}
