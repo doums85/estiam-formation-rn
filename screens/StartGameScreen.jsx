@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Card,
   Heading,
@@ -7,14 +7,11 @@ import {
   NumberInput,
   PrimaryButton,
 } from '../components';
+import { RootContext } from '../context';
 
-export default function StartGameScreen({
-  pickedNumberHandler,
-}) {
-  const [chosenNumber, setChosenNumber] = useState('');
-  const confirmHandler = () => {
-    pickedNumberHandler(chosenNumber);
-  };
+export default function StartGameScreen({ navigation }) {
+  const { updateUserNumber, addOpponentNumber } =
+    useContext(RootContext);
 
   return (
     <View style={styles.container}>
@@ -25,13 +22,19 @@ export default function StartGameScreen({
 
         <NumberInput
           onChangeText={(textEntered) =>
-            setChosenNumber(textEntered)
+            updateUserNumber(textEntered)
           }
         />
 
         <View style={styles.buttonContainer}>
           <PrimaryButton>Reset</PrimaryButton>
-          <PrimaryButton onPress={confirmHandler}>
+          <PrimaryButton
+            onPress={() => {
+              addOpponentNumber();
+              navigation.navigate('Game', {
+                name: 'Mamadou',
+              });
+            }}>
             Check !
           </PrimaryButton>
         </View>
@@ -43,7 +46,7 @@ export default function StartGameScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 100,
+    marginTop: 50,
     alignItems: 'center',
   },
   buttonContainer: {

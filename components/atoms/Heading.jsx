@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     borderWidth: 2,
     borderColor: '#222',
+    fontFamily: 'PressStart',
     padding: 12,
   },
 });

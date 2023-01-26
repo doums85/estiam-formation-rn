@@ -1,57 +1,84 @@
-import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   ImageBackground,
   StyleSheet,
   Text,
-  TextInput,
-  View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
-import { PrimaryButton } from './components';
-import { GameScreen, StartGameScreen } from './screens';
+import {
+  GameOverScreen,
+  GameScreen,
+  RootScreen,
+  StartGameScreen,
+} from './screens';
+import { RootProvider } from './context';
+import { useCallback } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 const background = require('./assets/background.jpeg');
 
+SplashScreen.preventAutoHideAsync();
+
+const Stack = createNativeStackNavigator();
+
 export default function App() {
-  const [secretNumber, setSecretNumber] = useState(
-    Math.trunc(Math.random() * 20 + 1)
-  );
-  const [userNumber, setUserNumber] = useState('');
+  const [fontsLoaded] = useFonts({
+    OpenSans: require('./assets/OpenSans-Regular.ttf'),
+    PressStart: require('./assets/PressStart2P-Regular.ttf'),
+  });
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      setTimeout(async () => {
+        await SplashScreen.hideAsync();
+      }, 1200);
+    }
+  }, [fontsLoaded]);
 
-  // Get number from children component
-  const pickedNumberHandler = (pickedNumber) => {
-    setUserNumber(pickedNumber);
-  };
+  if (!fontsLoaded) {
+    return null;
+  }
 
-  let screen = (
-    <StartGameScreen
-      pickedNumberHandler={pickedNumberHandler}
-    />
-  );
-
-  if (userNumber) screen = <GameScreen />;
-
-  /*   const compare = () => {
-    if (secretNumber < userNumber) {
-      setMessage('Too high');
-    } else if (secretNumber > userNumber) {
-      setMessage('Too low');
-    } else setMessage('Success');
-  };
- */
   return (
-    <LinearGradient
-      style={styles.root}
-      colors={['#F5F7FA', '#B8C6DB']}>
-      <ImageBackground
-        source={background}
+    <NavigationContainer>
+      <LinearGradient
         style={styles.root}
-        imageStyle={styles.background}>
-        {screen}
-        <StatusBar style="auto" />
-      </ImageBackground>
-    </LinearGradient>
+        colors={['#F5F7FA', '#B8C6DB']}
+        onLayout={onLayoutRootView}>
+        <ImageBackground
+          source={background}
+          style={styles.root}
+          imageStyle={styles.background}>
+          <RootProvider>
+            <Stack.Navigator
+              initialRouteName="Start"
+              screenOptions={{
+                contentStyle: {
+                  backgroundColor: 'transparent',
+                },
+                headerShown: false,
+              }}>
+              <Stack.Screen
+                name="Start"
+                component={StartGameScreen}
+              />
+
+              <Stack.Screen
+                name="Game"
+                component={GameScreen}
+              />
+              <Stack.Screen
+                name="GameOver"
+                component={GameOverScreen}
+              />
+            </Stack.Navigator>
+          </RootProvider>
+          <StatusBar style="auto" />
+        </ImageBackground>
+      </LinearGradient>
+    </NavigationContainer>
   );
 }
 
